@@ -7,7 +7,7 @@ module Amistad
       # friendships
       #####################################################################################
       has_many  :friendships,
-        :class_name => "Amistad::Friendships::#{Amistad.friendship_model}",
+        :class_name => Amistad.friendship_model,
         :foreign_key => "friendable_id"
 
 
@@ -18,7 +18,7 @@ module Amistad
       # inverse friendships
       #####################################################################################
       has_many  :inverse_friendships,
-        :class_name => "Amistad::Friendships::#{Amistad.friendship_model}",
+        :class_name => Amistad.friendship_model,
         :foreign_key => "friend_id"
 
       has_many  :pending_invited_by, ->  { where(:'friendships.pending' => true, :'friendships.blocker_id' => nil) }, :through => :inverse_friendships, :source => :friendable
@@ -28,7 +28,7 @@ module Amistad
       # blocked friendships
       #####################################################################################
       has_many  :blocked_friendships,
-        :class_name => "Amistad::Friendships::#{Amistad.friendship_model}",
+        :class_name => Amistad.friendship_model,
         :foreign_key => "blocker_id"
 
       has_many  :blockades, -> {where("friend_id <> blocker_id")}, :through => :blocked_friendships, :source => :friend
@@ -60,7 +60,7 @@ module Amistad
 
     # returns the list of approved friends
     def friends
-      friendship_model = Amistad::Friendships.const_get(:"#{Amistad.friendship_model}")
+      friendship_model = Amistad.friendship_class
 
       approved_friendship = friendship_model.where(friendable_id: id, pending: false, blocker_id: nil).select(:friend_id).to_sql
       approved_inverse_friendship = friendship_model.where(friend_id: id, pending: false, blocker_id: nil).select(:friendable_id).to_sql

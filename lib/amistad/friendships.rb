@@ -1,6 +1,8 @@
 module Amistad
   module Friendships
     if Object.const_defined? :ActiveRecord
+      return unless defined?(Amistad.friendship_class)
+
       const_set Amistad.friendship_model, Class.new(ActiveRecord::Base)
       const_get(Amistad.friendship_model.to_sym).class_exec do
         include Amistad::FriendshipModel
